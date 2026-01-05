@@ -12,14 +12,6 @@ const FullTable: React.FC<Props> = ({ table }) => {
     const [highlightedRow, setHighlightedRow] = useState<number | null>(null);
     const [highlightedCol, setHighlightedCol] = useState<number | null>(null);
 
-    const getGradientColor = (value: number) => {
-        if (value <= 10) return 'from-blue-500 to-blue-600';
-        if (value <= 25) return 'from-green-500 to-green-600';
-        if (value <= 50) return 'from-yellow-500 to-yellow-600';
-        if (value <= 75) return 'from-orange-500 to-orange-600';
-        return 'from-red-500 to-red-600';
-    };
-
     return (
         <div className="flex flex-col h-full">
             <div className="text-center mb-6">
@@ -32,7 +24,6 @@ const FullTable: React.FC<Props> = ({ table }) => {
 
             <div className="flex-1 flex items-center justify-center overflow-auto pb-4">
                 <div className="inline-block">
-                    {/* جدول ضرب */}
                     <div className="grid grid-cols-11 gap-1 p-2 glass rounded-2xl">
                         {/* سلول خالی گوشه */}
                         <div className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center">
@@ -47,8 +38,8 @@ const FullTable: React.FC<Props> = ({ table }) => {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: col * 0.05 }}
                                 className={`w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-xl font-bold text-lg ${highlightedCol === col
-                                        ? 'bg-gradient-to-br from-purple-500 to-pink-500 text-white scale-110 shadow-xl'
-                                        : 'bg-gradient-to-br from-indigo-600 to-blue-600 text-white'
+                                        ? 'bg-blue-500 text-white scale-110 shadow-xl'
+                                        : 'bg-blue-600 text-white'
                                     }`}
                             >
                                 {col}
@@ -64,8 +55,8 @@ const FullTable: React.FC<Props> = ({ table }) => {
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: row * 0.05 }}
                                     className={`w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-xl font-bold text-lg ${highlightedRow === row
-                                            ? 'bg-gradient-to-br from-purple-500 to-pink-500 text-white scale-110 shadow-xl'
-                                            : 'bg-gradient-to-br from-indigo-600 to-blue-600 text-white'
+                                            ? 'bg-blue-500 text-white scale-110 shadow-xl'
+                                            : 'bg-blue-600 text-white'
                                         }`}
                                 >
                                     {row}
@@ -102,28 +93,25 @@ const FullTable: React.FC<Props> = ({ table }) => {
                         w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-xl font-bold
                         cursor-pointer relative transition-all duration-300
                         ${isHighlighted
-                                                    ? 'bg-gradient-to-br from-purple-400 to-pink-400 text-white shadow-lg ring-2 ring-purple-300'
+                                                    ? 'bg-blue-500 text-white shadow-lg ring-2 ring-blue-300 scale-105'
                                                     : isHovered
-                                                        ? 'bg-gradient-to-br from-yellow-400 to-orange-400 text-white shadow-xl'
-                                                        : `bg-gradient-to-br ${getGradientColor(value)} text-white opacity-80 hover:opacity-100`
+                                                        ? 'bg-blue-400 text-white shadow-xl scale-110'
+                                                        : 'bg-blue-600/60 text-white hover:bg-blue-500'
                                                 }
                       `}
                                         >
                                             {value}
 
-                                            {/* انیمیشن ستاره برای اعداد خاص */}
-                                            <AnimatePresence>
-                                                {isHovered && (
-                                                    <motion.div
-                                                        initial={{ opacity: 0, scale: 0, rotate: -180 }}
-                                                        animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                                                        exit={{ opacity: 0, scale: 0, rotate: 180 }}
-                                                        className="absolute -top-1 -right-1"
-                                                    >
-                                                        <Sparkles className="w-4 h-4 text-yellow-300 fill-yellow-300" />
-                                                    </motion.div>
-                                                )}
-                                            </AnimatePresence>
+                                            {isHovered && (
+                                                <motion.div
+                                                    initial={{ opacity: 0, scale: 0, rotate: -180 }}
+                                                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                                                    exit={{ opacity: 0, scale: 0, rotate: 180 }}
+                                                    className="absolute -top-1 -right-1"
+                                                >
+                                                    <Sparkles className="w-4 h-4 text-yellow-300 fill-yellow-300" />
+                                                </motion.div>
+                                            )}
                                         </motion.div>
                                     );
                                 })}
