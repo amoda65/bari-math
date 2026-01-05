@@ -1,97 +1,174 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { BrainCircuit, Sparkles, Send, User } from 'lucide-react';
-import { getAITeacherAdvice } from '../geminiService';
+import { BookOpen, Lightbulb, CheckCircle } from 'lucide-react';
 
 interface Props {
   table: number;
 }
 
+const educationalContent: Record<number, {
+  concept: string;
+  realWorld: string;
+  trick: string;
+  example: string;
+}> = {
+  1: {
+    concept: "هر عددی ضرب در ۱ میشه خودش! مثل اینه که یه چیزو یک بار داشته باشی.",
+    realWorld: "اگه یک پیتزا داشته باشی، همون یک پیتزا رو خواهی خورد!",
+    trick: "ساده‌ترین جدول! فقط کافیه عدد رو بنویسی.",
+    example: "۱ × ۵ = ۵ چون یک دسته ۵ تایی داریم."
+  },
+  2: {
+    concept: "ضرب در ۲ یعنی دوبرابر! مثل اینکه دو تا از یه چیز داشته باشی.",
+    realWorld: "اگه دو تا دست داری و هرکدوم ۳ تا انگشت داشته باشن، جمعاً ۶ تا انگشتی!",
+    trick: "عدد رو اول با خودش جمع کن: ۴ × ۲ = ۴ + ۴ = ۸",
+    example: "۲ × ۶ = ۱۲ چون دو دسته ۶ تایی میشه ۱۲ تا."
+  },
+  3: {
+    concept: "ضرب در ۳ یعنی سه تا! مثل سه قسمت یک چیز.",
+    realWorld: "سه نفر دوست داری، به هرکدوم ۴ تا شیرینی میدی = ۱۲ تا شیرینی!",
+    trick: "عدد رو سه بار جمع کن: ۳ × ۴ = ۴ + ۴ + ۴ = ۱۲",
+    example: "۳ × ۵ = ۱۵ چون سه دسته ۵ تایی میشه ۱۵."
+  },
+  4: {
+    concept: "ضرب در ۴ مثل چهار گوشه یک چیزه! دو برابر دو برابر.",
+    realWorld: "یه میز ۴ پا داره، اگه ۳ تا میز داشته باشی = ۱۲ تا پا!",
+    trick: "دو بار دوبرابر کن: ۴ × ۳ → ابتدا ۳ × ۲ = ۶ بعد ۶ × ۲ = ۱۲",
+    example: "۴ × ۵ = ۲۰ چون چهار دسته ۵ تایی."
+  },
+  5: {
+    concept: "ضرب در ۵ خیلی راحته! همیشه به ۰ یا ۵ ختم میشه.",
+    realWorld: "پنج انگشت داری، ۴ نفر = ۲۰ انگشت کل!",
+    trick: "عدد رو ضرب در ۱۰ کن و نصفش کن: ۵ × ۶ → ۶ × ۱۰ = ۶۰، نصفش = ۳۰",
+    example: "۵ × ۷ = ۳۵ چون پنج دسته ۷ تایی."
+  },
+  6: {
+    concept: "ضرب در ۶ ترکیب ۲ و ۳ هست! راحت‌تر از چیزی که فکر می‌کنی.",
+    realWorld: "یه تخم مرغ بسته ۶ تایی داره، ۴ بسته = ۲۴ تا تخم مرغ!",
+    trick: "ابتدا ضرب در ۳ کن، بعد دو برابر: ۶ × ۴ → ۳ × ۴ = ۱۲، بعد ۱۲ × ۲ = ۲۴",
+    example: "۶ × ۵ = ۳۰ چون شش دسته ۵ تایی."
+  },
+  7: {
+    concept: "ضرب در ۷ یکم سخت‌تره ولی با تمرین راحت میشه!",
+    realWorld: "هفته ۷ روزه، ۳ هفته = ۲۱ روز!",
+    trick: "از ۵ کمک بگیر: ۷ × ۶ = (۵ × ۶) + (۲ × ۶) = ۳۰ + ۱۲ = ۴۲",
+    example: "۷ × ۸ = ۵۶ چون هفت دسته ۸ تایی."
+  },
+  8: {
+    concept: "ضرب در ۸ یعنی دو برابر، دو برابر، دو برابر!",
+    realWorld: "یه اختاپوس ۸ تا پا داره، ۳ تا اختاپوس = ۲۴ پا!",
+    trick: "سه بار دوبرابر کن: ۸ × ۵ → ۵×۲=۱۰ → ۱۰×۲=۲۰ → ۲۰×۲=۴۰",
+    example: "۸ × ۶ = ۴۸ چون هشت دسته ۶ تایی."
+  },
+  9: {
+    concept: "ضرب در ۹ یه ترفند جالب داره! انگشتات میتونن کمکت کنن.",
+    realWorld: "۹ تا موز در هر دسته، ۵ دسته = ۴۵ تا موز!",
+    trick: "ضرب در ۱۰ کن، یکی کم کن: ۹ × ۷ = (۱۰ × ۷) - ۷ = ۷۰ - ۷ = ۶۳",
+    example: "۹ × ۴ = ۳۶ چون نه دسته ۴ تایی."
+  },
+  10: {
+    concept: "ساده‌ترین جدول بعد از ۱! فقط یه صفر اضافه کن.",
+    realWorld: "۱۰ تا انگشت داری، ۳ نفر = ۳۰ انگشت!",
+    trick: "فقط صفر بنویس: ۱۰ × ۶ = ۶۰",
+    example: "۱۰ × ۸ = ۸۰ چون ده دسته ۸ تایی."
+  }
+};
+
 const AITutor: React.FC<Props> = ({ table }) => {
-  const [multiplier, setMultiplier] = useState(3);
-  const [explanation, setExplanation] = useState<string>('');
-  const [loading, setLoading] = useState(false);
-
-  const askTeacher = async () => {
-    setLoading(true);
-    setExplanation('');
-    const advice = await getAITeacherAdvice(table, multiplier);
-    setExplanation(advice || '');
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    askTeacher();
-  }, [table, multiplier]);
+  const [selectedMultiplier, setSelectedMultiplier] = useState(5);
+  const content = educationalContent[table] || educationalContent[1];
+  const result = table * selectedMultiplier;
 
   return (
     <div className="flex flex-col h-full">
-      <div className="text-center mb-10">
-        <h2 className="text-2xl font-bold mb-2">معلم هوشمند کهکشانی</h2>
-        <p className="text-gray-400">هر سوالی داری بپرس تا با مثال‌های قشنگ برات توضیح بدم</p>
+      <div className="text-center mb-8">
+        <h2 className="text-2xl font-bold mb-2">راهنمای جدول {table}</h2>
+        <p className="text-gray-400">بیا با هم یاد بگیریم چطور جدول {table} رو راحت‌تر یاد بگیریم!</p>
       </div>
 
-      <div className="flex-1 flex flex-col md:flex-row gap-8 items-stretch">
-        {/* Tutor Personality */}
-        <div className="md:w-1/3 glass rounded-3xl p-6 flex flex-col items-center justify-center text-center">
-          <div className="relative mb-6">
-            <div className="w-32 h-32 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-full flex items-center justify-center shadow-xl">
-               <BrainCircuit className="w-16 h-16 text-white" />
+      <div className="flex-1 grid md:grid-cols-2 gap-6">
+        {/* مفهوم اصلی */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="glass rounded-3xl p-6"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <div className="bg-blue-600 p-3 rounded-xl">
+              <Lightbulb className="w-6 h-6" />
             </div>
-            <motion.div 
-              animate={{ rotate: 360 }}
-              transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-              className="absolute -top-2 -right-2 text-yellow-400"
-            >
-               <Sparkles className="w-8 h-8" />
-            </motion.div>
+            <h3 className="text-xl font-bold">مفهوم اصلی</h3>
           </div>
-          <h3 className="text-xl font-bold mb-2">من "روبو-متمتیک" هستم!</h3>
-          <p className="text-sm text-gray-400">من عاشق اعدادم و می‌تونم هر ضربی رو به زبان ساده برات توضیح بدم.</p>
-        </div>
+          <p className="text-lg leading-relaxed text-blue-100">{content.concept}</p>
+        </motion.div>
 
-        {/* Interaction Area */}
-        <div className="flex-1 flex flex-col gap-6">
-          <div className="p-6 bg-white/5 rounded-3xl border border-white/10 flex flex-col gap-4">
-             <div className="flex items-center gap-3">
-                <div className="bg-blue-600 p-2 rounded-lg"><User className="w-5 h-5" /></div>
-                <span className="font-bold">بپرس: چرا {table} ضربدر {multiplier} میشه {table * multiplier}؟</span>
-             </div>
-             <div className="flex items-center gap-4">
-                <input 
-                  type="range" 
-                  min="1" 
-                  max="10" 
-                  value={multiplier} 
-                  onChange={(e) => setMultiplier(parseInt(e.target.value))}
-                  className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
-                />
-                <span className="text-2xl font-bold w-8">{multiplier}</span>
-             </div>
+        {/* مثال واقعی */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="glass rounded-3xl p-6"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <div className="bg-green-600 p-3 rounded-xl">
+              <BookOpen className="w-6 h-6" />
+            </div>
+            <h3 className="text-xl font-bold">مثال از زندگی</h3>
           </div>
+          <p className="text-lg leading-relaxed text-green-100">{content.realWorld}</p>
+        </motion.div>
 
-          <div className="flex-1 glass rounded-3xl p-8 relative min-h-[200px] overflow-y-auto">
-            {loading ? (
-              <div className="flex flex-col items-center justify-center h-full gap-4">
-                <div className="flex gap-2">
-                  <motion.div animate={{ y: [0, -10, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0 }} className="w-3 h-3 bg-blue-400 rounded-full" />
-                  <motion.div animate={{ y: [0, -10, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.2 }} className="w-3 h-3 bg-blue-500 rounded-full" />
-                  <motion.div animate={{ y: [0, -10, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.4 }} className="w-3 h-3 bg-blue-600 rounded-full" />
-                </div>
-                <p className="text-gray-400">روبو در حال فکر کردن...</p>
-              </div>
-            ) : (
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-xl md:text-2xl leading-relaxed text-blue-100"
-              >
-                {explanation}
-              </motion.div>
-            )}
+        {/* ترفند یادگیری */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="glass rounded-3xl p-6"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <div className="bg-purple-600 p-3 rounded-xl">
+              <CheckCircle className="w-6 h-6" />
+            </div>
+            <h3 className="text-xl font-bold">ترفند حل سریع</h3>
           </div>
-        </div>
+          <p className="text-lg leading-relaxed text-purple-100">{content.trick}</p>
+        </motion.div>
+
+        {/* تمرین عملی */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="glass rounded-3xl p-6"
+        >
+          <h3 className="text-xl font-bold mb-4">تمرین کن!</h3>
+          <div className="space-y-4">
+            <div className="flex items-center gap-4">
+              <span className="text-lg">تعداد:</span>
+              <input
+                type="range"
+                min="1"
+                max="10"
+                value={selectedMultiplier}
+                onChange={(e) => setSelectedMultiplier(parseInt(e.target.value))}
+                className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+              />
+              <span className="text-2xl font-bold w-8">{selectedMultiplier}</span>
+            </div>
+            <div className="bg-white/5 rounded-2xl p-6 text-center">
+              <p className="text-3xl font-bold mb-2">
+                {table} × {selectedMultiplier} = {result}
+              </p>
+              <p className="text-gray-400">{content.example.replace(/\d+/g, (match) => {
+                const num = parseInt(match);
+                if (num === table * selectedMultiplier) return result.toString();
+                if (match === table.toString()) return table.toString();
+                return selectedMultiplier.toString();
+              })}</p>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </div>
   );
