@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
-import { 
-  Rocket, 
-  BrainCircuit, 
-  Gamepad2, 
+import {
+  Rocket,
+  BrainCircuit,
+  Gamepad2,
   Star,
   Trophy,
   Activity,
@@ -11,7 +11,8 @@ import {
   Layers,
   Square,
   Hand,
-  PlusCircle
+  PlusCircle,
+  Grid3x3
 } from 'lucide-react';
 import { LearningMode, ModeHints } from './types';
 import MultiplicationGrid from './components/MultiplicationGrid';
@@ -24,6 +25,7 @@ import AreaModel from './components/AreaModel';
 import FingerMethod from './components/FingerMethod';
 import ArrayModel from './components/ArrayModel';
 import HintOverlay from './components/HintOverlay';
+import FullTable from './components/FullTable';
 
 const App: React.FC = () => {
   const [activeMode, setActiveMode] = useState<LearningMode>(LearningMode.EXPLORE);
@@ -61,6 +63,8 @@ const App: React.FC = () => {
         return <QuizMode table={selectedTable} onFinish={(score) => updateProgress(selectedTable, score)} />;
       case LearningMode.AI_TUTOR:
         return <AITutor table={selectedTable} />;
+      case LearningMode.FULL_TABLE:
+        return <FullTable table={selectedTable} />;
       default:
         return null;
     }
@@ -94,15 +98,15 @@ const App: React.FC = () => {
             { id: LearningMode.PATTERNS, icon: SearchCode, label: 'الگو' },
             { id: LearningMode.QUIZ, icon: Trophy, label: 'مسابقه' },
             { id: LearningMode.AI_TUTOR, icon: BrainCircuit, label: 'معلم' },
+            { id: LearningMode.FULL_TABLE, icon: Grid3x3, label: 'جدول کامل' },
           ].map((mode) => (
             <button
               key={mode.id}
               onClick={() => setActiveMode(mode.id)}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl transition-all whitespace-nowrap ${
-                activeMode === mode.id 
-                ? 'bg-blue-600 text-white shadow-lg' 
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl transition-all whitespace-nowrap ${activeMode === mode.id
+                ? 'bg-blue-600 text-white shadow-lg'
                 : 'text-gray-400 hover:text-white hover:bg-white/5'
-              }`}
+                }`}
             >
               <mode.icon className="w-4 h-4" />
               <span className="text-xs font-medium">{mode.label}</span>
@@ -122,11 +126,10 @@ const App: React.FC = () => {
             <button
               key={num}
               onClick={() => setSelectedTable(num)}
-              className={`relative w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-xl font-bold text-lg transition-all transform hover:scale-110 ${
-                selectedTable === num 
-                ? 'bg-gradient-to-br from-indigo-500 to-purple-600 border-2 border-white/50 shadow-xl' 
+              className={`relative w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-xl font-bold text-lg transition-all transform hover:scale-110 ${selectedTable === num
+                ? 'bg-gradient-to-br from-indigo-500 to-purple-600 border-2 border-white/50 shadow-xl'
                 : 'glass hover:bg-white/10'
-              }`}
+                }`}
             >
               {num}
               {progress[num] >= 90 && (
@@ -140,11 +143,11 @@ const App: React.FC = () => {
       </footer>
 
       {/* Dynamic Hint Overlay */}
-      <HintOverlay 
+      <HintOverlay
         key={activeMode} // Force re-render on mode change to show appropriate hint if not seen
-        modeKey={activeMode} 
-        title={activeHint.title} 
-        message={activeHint.message} 
+        modeKey={activeMode}
+        title={activeHint.title}
+        message={activeHint.message}
       />
     </div>
   );

@@ -8,7 +8,8 @@ export enum LearningMode {
   FINGER_METHOD = 'finger_method',
   PATTERNS = 'patterns',
   QUIZ = 'quiz',
-  AI_TUTOR = 'ai_tutor'
+  AI_TUTOR = 'ai_tutor',
+  FULL_TABLE = 'full_table'
 }
 
 export const ModeHints: Record<LearningMode, { title: string; message: string }> = {
@@ -48,6 +49,10 @@ export const ModeHints: Record<LearningMode, { title: string; message: string }>
   [LearningMode.AI_TUTOR]: {
     title: "معلم هوشمند",
     message: "هر سوالی داری از روبو بپرس. اون با مثال‌های واقعی برات توضیح میده که چرا ضرب اینطوری میشه."
+  },
+  [LearningMode.FULL_TABLE]: {
+    title: "جدول ضرب کامل",
+    message: "تمام جدول ضرب از ۱ تا ۱۰ رو اینجا می‌بینی. روی هر عدد کلیک کن تا سطر و ستونش رو highlight کنی!"
   }
 };
 
