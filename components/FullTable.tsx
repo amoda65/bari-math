@@ -11,6 +11,7 @@ const FullTable: React.FC<Props> = ({ table }) => {
     const [hoveredCell, setHoveredCell] = useState<{ row: number, col: number } | null>(null);
     const [highlightedRow, setHighlightedRow] = useState<number | null>(null);
     const [highlightedCol, setHighlightedCol] = useState<number | null>(null);
+    const [selectedValue, setSelectedValue] = useState<number | null>(null);
 
     return (
         <div className="flex flex-col h-full">
@@ -27,7 +28,7 @@ const FullTable: React.FC<Props> = ({ table }) => {
                     <div className="grid grid-cols-11 gap-1 p-2 glass rounded-2xl">
                         {/* سلول خالی گوشه */}
                         <div className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center">
-                            <Sparkles className="w-5 h-5 text-yellow-400" />
+                            <Sparkles className="w-5 h-5 text-pink-400" />
                         </div>
 
                         {/* هدر ستون‌ها */}
@@ -38,8 +39,8 @@ const FullTable: React.FC<Props> = ({ table }) => {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: col * 0.05 }}
                                 className={`w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-xl font-bold text-lg ${highlightedCol === col
-                                        ? 'bg-blue-500 text-white scale-110 shadow-xl'
-                                        : 'bg-blue-500/80 text-white'
+                                    ? 'bg-gradient-to-br from-pink-500 to-rose-500 text-white scale-110 shadow-xl shadow-pink-300/50'
+                                    : 'bg-gradient-to-br from-pink-400 to-rose-400 text-white'
                                     }`}
                             >
                                 {col}
@@ -55,8 +56,8 @@ const FullTable: React.FC<Props> = ({ table }) => {
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: row * 0.05 }}
                                     className={`w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-xl font-bold text-lg ${highlightedRow === row
-                                        ? 'bg-blue-500 text-white scale-110 shadow-xl'
-                                        : 'bg-blue-600 text-white'
+                                        ? 'bg-gradient-to-br from-pink-500 to-rose-500 text-white scale-110 shadow-xl shadow-pink-300/50'
+                                        : 'bg-gradient-to-br from-pink-400 to-rose-400 text-white'
                                         }`}
                                 >
                                     {row}
@@ -67,6 +68,7 @@ const FullTable: React.FC<Props> = ({ table }) => {
                                     const value = row * col;
                                     const isHovered = hoveredCell?.row === row && hoveredCell?.col === col;
                                     const isHighlighted = highlightedRow === row || highlightedCol === col;
+                                    const isSameValue = selectedValue !== null && value === selectedValue;
 
                                     return (
                                         <motion.div
@@ -88,17 +90,20 @@ const FullTable: React.FC<Props> = ({ table }) => {
                                             onClick={() => {
                                                 setHighlightedRow(highlightedRow === row ? null : row);
                                                 setHighlightedCol(highlightedCol === col ? null : col);
+                                                setSelectedValue(selectedValue === value ? null : value);
                                             }}
                                             className={`
-                        w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-xl font-bold
-                        cursor-pointer relative transition-all duration-300
-                        ${isHighlighted
-                                                    ? 'bg-blue-400 text-white shadow-lg ring-2 ring-blue-300 scale-105'
-                                                    : isHovered
-                                                        ? 'bg-blue-300 text-white shadow-xl scale-110'
-                                                        : 'bg-blue-500/70 text-white hover:bg-blue-400'
+                                                w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-xl font-bold
+                                                cursor-pointer relative transition-all duration-300
+                                                ${isSameValue
+                                                    ? 'bg-gradient-to-br from-purple-500 to-fuchsia-500 text-white shadow-lg ring-2 ring-purple-300 scale-105'
+                                                    : isHighlighted
+                                                        ? 'bg-gradient-to-br from-pink-400 to-rose-400 text-white shadow-lg ring-2 ring-pink-300 scale-105'
+                                                        : isHovered
+                                                            ? 'bg-gradient-to-br from-pink-300 to-rose-300 text-white shadow-xl scale-110'
+                                                            : 'bg-gradient-to-br from-pink-200 to-rose-200 text-gray-700 hover:from-pink-300 hover:to-rose-300 hover:text-white'
                                                 }
-                      `}
+                                            `}
                                         >
                                             {value}
 
