@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
     },
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, '.'),
+        '@': path.resolve(path.dirname(new URL(import.meta.url).pathname.substring(1)), '.'),
       }
     }
   };
