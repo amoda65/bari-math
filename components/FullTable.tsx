@@ -39,7 +39,7 @@ const FullTable: React.FC<Props> = ({ table }) => {
                                 transition={{ delay: col * 0.05 }}
                                 className={`w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-xl font-bold text-lg ${highlightedCol === col
                                         ? 'bg-blue-500 text-white scale-110 shadow-xl'
-                                        : 'bg-blue-600 text-white'
+                                        : 'bg-blue-500/80 text-white'
                                     }`}
                             >
                                 {col}
@@ -55,8 +55,8 @@ const FullTable: React.FC<Props> = ({ table }) => {
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: row * 0.05 }}
                                     className={`w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-xl font-bold text-lg ${highlightedRow === row
-                                            ? 'bg-blue-500 text-white scale-110 shadow-xl'
-                                            : 'bg-blue-600 text-white'
+                                        ? 'bg-blue-500 text-white scale-110 shadow-xl'
+                                        : 'bg-blue-600 text-white'
                                         }`}
                                 >
                                     {row}
@@ -93,10 +93,10 @@ const FullTable: React.FC<Props> = ({ table }) => {
                         w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-xl font-bold
                         cursor-pointer relative transition-all duration-300
                         ${isHighlighted
-                                                    ? 'bg-blue-500 text-white shadow-lg ring-2 ring-blue-300 scale-105'
+                                                    ? 'bg-blue-400 text-white shadow-lg ring-2 ring-blue-300 scale-105'
                                                     : isHovered
-                                                        ? 'bg-blue-400 text-white shadow-xl scale-110'
-                                                        : 'bg-blue-600/60 text-white hover:bg-blue-500'
+                                                        ? 'bg-blue-300 text-white shadow-xl scale-110'
+                                                        : 'bg-blue-500/70 text-white hover:bg-blue-400'
                                                 }
                       `}
                                         >
